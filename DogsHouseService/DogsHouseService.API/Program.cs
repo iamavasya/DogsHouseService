@@ -4,6 +4,7 @@ using DogsHouseService.BusinessLogic.Interfaces;
 using DogsHouseService.BusinessLogic.Services;
 using DogsHouseService.Infrastructure.DbContextes;
 using Microsoft.EntityFrameworkCore;
+using DogsHouseService.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Middleware: 10 requests per second
+app.UseMiddleware<RateLimitingMiddleware>(10, TimeSpan.FromSeconds(1));
 
 app.UseHttpsRedirection();
 
