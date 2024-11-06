@@ -22,8 +22,7 @@ namespace DogsHouseService.BusinessLogic.Services
         public async Task<IList<DogDto>> GetDogsAsync(int pageNumber, int pageSize, string attribute, string order)
         {
             var dogs = await _dogsRepository.GetDogsAsync(pageNumber, pageSize);
-            SortDogs(dogs, attribute, order);
-            return MapToDtoList(dogs);
+            return SortDogs(MapToDtoList(dogs), attribute, order);
         }
 
         public async Task<Dog> GetByIdAsync(int id)
@@ -42,9 +41,10 @@ namespace DogsHouseService.BusinessLogic.Services
             return await _dogsRepository.CreateDogAsync(dogEntity);
         }
 
-        public IList<Dog> SortDogs(IList<Dog> dogs, string attribute, string order)
+        public IList<DogDto> SortDogs(IList<DogDto> dogs, string attribute, string order)
         {
-            Func<Dog, object> sortBy = attribute.ToLower() switch
+            // TODO: Not working.
+            Func<DogDto, object> sortBy = attribute.ToLower() switch
             {
                 "weight" => dog => dog.Weight,
                 "taillength" => dog => dog.TailLength,
@@ -52,9 +52,7 @@ namespace DogsHouseService.BusinessLogic.Services
                 _ => dog => dog.Name
             };
 
-            return order.ToLower() == "desc"
-                ? dogs.OrderByDescending(sortBy).ToList()
-                : dogs.OrderBy(sortBy).ToList();
+            return order.ToLower() == "desc" ? dogs.OrderByDescending(sortBy).ToList() : dogs.OrderBy(sortBy).ToList();
         }
 
         public Dog MapToEntity(DogDto dog)
